@@ -1,0 +1,5 @@
+com\stocknews\stock_news\googlenewsservice\GoogleNewsService.class
+com\stocknews\stock_news\newsentity\NewsEntity.class
+com\stocknews\stock_news\newscontroller\NewsController.class
+com\stocknews\stock_news\StockNewsApplication.class
+com\stocknews\stock_news\newsservice\NewsService.class
