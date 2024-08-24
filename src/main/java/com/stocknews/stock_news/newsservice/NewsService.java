@@ -29,7 +29,7 @@ public class NewsService {
 
     public void getlatest() {
         try {
-            String url = "https://www.financialexpress.com/market/share-market-today-live-updates-nifty-50-bse-sensex-latest-news-22-aug-2024-3589136/"; // Verify this URL
+            String url = "https://www.financialexpress.com/market/"; // Verify this URL
             String response = getStockNews(url);
             Document doc = Jsoup.parse(response);
 
