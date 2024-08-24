@@ -29,45 +29,44 @@ public class NewsService {
 
     public void getlatest() {
         try {
-            String url = "https://www.financialexpress.com/market/"; // Verify this URL
-            String response = getStockNews(url);
+            String url1 = "https://www.livemint.com/market/stock-market-news";
+            String response = getStockNews(url1);
             Document doc = Jsoup.parse(response);
-
-            // Select multiple elements for each class
-            Elements elementsClass1 = doc.getElementsByClass("liveblog-entry-heading"); // Adjust this class as needed
-            Elements elementsClass2 = doc.getElementsByClass("liveblog-entry-content"); // Adjust this class as needed
-
-            // Process the elements and collect their text
-            List<String> stockHeading = elementsClass1.stream()
+            
+            Elements headlines = doc.getElementsByClass("headline");
+            Elements thumbnails = doc.getElementsByClass("thumbnail");
+            
+            List<String> stockHeadlines = headlines.stream()
                     .map(Element::text)
                     .distinct()
                     .collect(Collectors.toList());
-            List<String> stockContent = elementsClass2.stream()
-                    .map(Element::text)
+            
+            List<String> stockThumbnails = thumbnails.stream()
+                    .map(article -> {
+                        Element imgTag = article.selectFirst("img");
+                        return (imgTag != null) ? imgTag.attr("src") : null;
+                    })
+                    .filter(url -> url1 != null && !url.isEmpty())
                     .distinct()
                     .collect(Collectors.toList());
+            
+            System.out.println("Headlines:");
+            stockHeadlines.forEach(System.out::println);
 
-            // For demonstration purposes, print all collected values
-            System.out.println("Stock Names:");
-            stockHeading.forEach(System.out::println);
-
-            System.out.println("Stock Prices:");
-            stockContent.forEach(System.out::println);
-
-
-            // Create a list of StockInfo objects
+            System.out.println("Thumbnails:");
+            stockThumbnails.forEach(System.out::println);
+            
             List<NewsEntity> stockNewsList = new ArrayList<>();
-            for (int i = 0; i < stockHeading.size(); i++) {
-                String heading = stockHeading.get(i);
-                String content = i < stockContent.size() ? stockContent.get(i) : "Not found";
-                stockNewsList.add(new NewsEntity(heading, content));
+            for (int i = 0; i < stockHeadlines.size(); i++) {
+                String headline = stockHeadlines.get(i);
+                String thumbnail = i < stockThumbnails.size() ? stockThumbnails.get(i) : "Not found";
+                stockNewsList.add(new NewsEntity(headline, thumbnail));
             }
 
             indexStockNewsList.set(stockNewsList);
 
         } catch (IOException e) {
-            // Log error here using a logging framework like SLF4J or Log4j
-            e.printStackTrace(); // Optionally keep this for debugging; replace with a logger in production
+            e.printStackTrace(); 
         }
     }
 
@@ -86,4 +85,3 @@ public class NewsService {
         }
     }
 }
-
